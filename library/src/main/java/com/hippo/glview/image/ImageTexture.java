@@ -464,7 +464,7 @@ public class ImageTexture implements Texture, Animatable {
             }
         }
 
-        boolean end = mReleased.get() || mNeedRelease.get() ||
+        boolean end = mReleased.get() || mNeedRelease.get() || mImage.isRecycled() ||
                 (mImage.isCompleted() && mImage.getFrameCount() <= 1) || mRunning.get();
 
         synchronized (mImage) {
@@ -675,13 +675,13 @@ public class ImageTexture implements Texture, Animatable {
                 mImageBusy = true;
             } else {
                 releaseNow = false;
-                mNeedRelease.set(true);
+                mNeedRelease.lazySet(true);
             }
         }
 
         if (releaseNow) {
             mImage.release();
-            mReleased.set(true);
+            mReleased.lazySet(true);
             synchronized (mImage) {
                 mImageBusy = false;
             }
