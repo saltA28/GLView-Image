@@ -457,25 +457,12 @@ public class ImageTexture implements Texture, Animatable {
     @Override
     public void start() {
         synchronized (mImage) {
-            if (!mImageBusy) {
-                mImageBusy = true;
-            } else {
+            if (mRunning.get() || mReleased.get() || mNeedRelease.get() || mImage.isRecycled() ||
+                    (mImage.isCompleted() && mImage.getFrameCount() <= 1)) {
                 return;
             }
+            mRunning.lazySet(true);
         }
-
-        boolean end = mReleased.get() || mNeedRelease.get() || mImage.isRecycled() ||
-                (mImage.isCompleted() && mImage.getFrameCount() <= 1) || mRunning.get();
-
-        synchronized (mImage) {
-            mImageBusy = false;
-        }
-
-        if (end) {
-            return;
-        }
-
-        mRunning.lazySet(true);
 
         synchronized (mImage) {
             if (mAnimateRunnable == null) {
