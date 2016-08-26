@@ -17,10 +17,11 @@
 package com.hippo.glview.image;
 
 import android.graphics.RectF;
-import android.support.annotation.NonNull;
 
 import com.hippo.glview.glrenderer.GLCanvas;
-import com.hippo.yorozuya.AssertUtils;
+import com.hippo.image.ImageData;
+
+import junit.framework.Assert;
 
 public class ImageSpriteTexture extends ImageTexture {
 
@@ -30,10 +31,10 @@ public class ImageSpriteTexture extends ImageTexture {
     private final RectF mTempSource = new RectF();
     private final RectF mTempTarget = new RectF();
 
-    public ImageSpriteTexture(@NonNull ImageWrapper image, int count, int[] rects) {
+    public ImageSpriteTexture(ImageData image, int count, int[] rects) {
         super(image);
 
-        AssertUtils.assertEquals("rects.length must be count * 4", count * 4, rects.length);
+        Assert.assertEquals("rects.length must be count * 4", count * 4, rects.length);
         mCount = count;
         mRects = rects;
     }
@@ -43,34 +44,34 @@ public class ImageSpriteTexture extends ImageTexture {
     }
 
     public void drawSprite(GLCanvas canvas, int index, int x, int y) {
-        int[] rects = mRects;
-        int offset = index * 4;
-        int sourceX = rects[offset];
-        int sourceY = rects[offset + 1];
-        int sourceWidth = rects[offset + 2];
-        int sourceHeight = rects[offset + 3];
+        final int[] rects = mRects;
+        final int offset = index * 4;
+        final int sourceX = rects[offset];
+        final int sourceY = rects[offset + 1];
+        final int sourceWidth = rects[offset + 2];
+        final int sourceHeight = rects[offset + 3];
         mTempSource.set(sourceX, sourceY, sourceX + sourceWidth, sourceY + sourceHeight);
         mTempTarget.set(x, y, x + sourceWidth, y + sourceHeight);
         draw(canvas, mTempSource, mTempTarget);
     }
 
     public void drawSprite(GLCanvas canvas, int index, int x, int y, int width, int height) {
-        int[] rects = mRects;
-        int offset = index * 4;
-        int sourceX = rects[offset];
-        int sourceY = rects[offset + 1];
+        final int[] rects = mRects;
+        final int offset = index * 4;
+        final int sourceX = rects[offset];
+        final int sourceY = rects[offset + 1];
         mTempSource.set(sourceX, sourceY, sourceX + rects[offset + 2], sourceY + rects[offset + 3]);
         mTempTarget.set(x, y, x + width, y + height);
         draw(canvas, mTempSource, mTempTarget);
     }
 
     public void drawSpriteMixed(GLCanvas canvas, int index, int color, float ratio, int x, int y) {
-        int[] rects = mRects;
-        int offset = index * 4;
-        int sourceX = rects[offset];
-        int sourceY = rects[offset + 1];
-        int sourceWidth = rects[offset + 2];
-        int sourceHeight = rects[offset + 3];
+        final int[] rects = mRects;
+        final int offset = index * 4;
+        final int sourceX = rects[offset];
+        final int sourceY = rects[offset + 1];
+        final int sourceWidth = rects[offset + 2];
+        final int sourceHeight = rects[offset + 3];
         mTempSource.set(sourceX, sourceY, sourceX + sourceWidth, sourceY + sourceHeight);
         mTempTarget.set(x, y, x + sourceWidth, y + sourceHeight);
         drawMixed(canvas, color, ratio, mTempSource, mTempTarget);
@@ -78,10 +79,10 @@ public class ImageSpriteTexture extends ImageTexture {
 
     public void drawSpriteMixed(GLCanvas canvas, int index, int color, float ratio,
             int x, int y, int width, int height) {
-        int[] rects = mRects;
-        int offset = index * 4;
-        int sourceX = rects[offset];
-        int sourceY = rects[offset + 1];
+        final int[] rects = mRects;
+        final int offset = index * 4;
+        final int sourceX = rects[offset];
+        final int sourceY = rects[offset + 1];
         mTempSource.set(sourceX, sourceY, sourceX + rects[offset + 2],
                 sourceY + rects[offset + 3]);
         mTempTarget.set(x, y, x + width, y + height);

@@ -25,6 +25,7 @@ import android.support.annotation.Nullable;
 
 import com.hippo.glview.glrenderer.GLCanvas;
 import com.hippo.image.Image;
+import com.hippo.image.ImageData;
 
 import java.util.Arrays;
 
@@ -35,7 +36,7 @@ public class ImageMovableTextTexture extends ImageSpriteTexture {
     private final float mHeight;
     private final float mMaxWidth;
 
-    public ImageMovableTextTexture(@NonNull ImageWrapper image, int count, int[] rects,
+    public ImageMovableTextTexture(@NonNull ImageData image, int count, int[] rects,
             char[] characters, float[] widths, float height, float maxWidth) {
         super(image, count, rects);
 
@@ -46,12 +47,11 @@ public class ImageMovableTextTexture extends ImageSpriteTexture {
     }
 
     public int[] getTextIndexes(String text) {
-        char[] characters = mCharacters;
-
-        int length = text.length();
-        int[] indexes = new int[length];
+        final char[] characters = mCharacters;
+        final int length = text.length();
+        final int[] indexes = new int[length];
         for (int i = 0; i < length; i++) {
-            char ch = text.charAt(i);
+            final char ch = text.charAt(i);
             indexes[i] = Arrays.binarySearch(characters, ch);
         }
 
@@ -59,13 +59,13 @@ public class ImageMovableTextTexture extends ImageSpriteTexture {
     }
 
     public float getTextWidth(String text) {
-        char[] characters = mCharacters;
-        float[] widths = mWidths;
+        final char[] characters = mCharacters;
+        final float[] widths = mWidths;
         float width = 0.0f;
 
         for (int i = 0, n = text.length(); i < n; i++) {
-            char ch = text.charAt(i);
-            int index = Arrays.binarySearch(characters, ch);
+            final char ch = text.charAt(i);
+            final int index = Arrays.binarySearch(characters, ch);
             if (index >= 0) {
                 width += widths[index];
             } else {
@@ -77,11 +77,9 @@ public class ImageMovableTextTexture extends ImageSpriteTexture {
     }
 
     public float getTextWidth(int[] indexes) {
-        float[] widths = mWidths;
+        final float[] widths = mWidths;
         float width = 0.0f;
-        int length = indexes.length;
-        for (int i = 0; i < length; i++) {
-            int index = indexes[i];
+        for (final int index : indexes) {
             if (index >= 0) {
                 width += widths[index];
             } else {
@@ -101,12 +99,12 @@ public class ImageMovableTextTexture extends ImageSpriteTexture {
     }
 
     public void drawText(GLCanvas canvas, String text, int x, int y) {
-        char[] characters = mCharacters;
-        float[] widths = mWidths;
+        final char[] characters = mCharacters;
+        final float[] widths = mWidths;
 
         for (int i = 0, n = text.length(); i < n; i++) {
-            char ch = text.charAt(i);
-            int index = Arrays.binarySearch(characters, ch);
+            final char ch = text.charAt(i);
+            final int index = Arrays.binarySearch(characters, ch);
             if (index >= 0) {
                 drawSprite(canvas, index, x, y);
                 x += widths[index];
@@ -117,10 +115,9 @@ public class ImageMovableTextTexture extends ImageSpriteTexture {
     }
 
     public void drawText(GLCanvas canvas, int[] indexes, int x, int y) {
-        float[] widths = mWidths;
+        final float[] widths = mWidths;
 
-        for (int i = 0, n = indexes.length; i < n; i++) {
-            int index = indexes[i];
+        for (final int index : indexes) {
             if (index >= 0) {
                 drawSprite(canvas, index, x, y);
                 x += widths[index];
@@ -140,23 +137,23 @@ public class ImageMovableTextTexture extends ImageSpriteTexture {
      */
     @Nullable
     public static ImageMovableTextTexture create(Typeface typeface, int size, int color, char[] characters) {
-        Paint paint = new Paint();
+        final Paint paint = new Paint();
         paint.setAntiAlias(true);
         paint.setTextSize(size);
         paint.setColor(color);
         paint.setTypeface(typeface);
 
-        Paint.FontMetricsInt fmi = paint.getFontMetricsInt();
-        int fixed = fmi.bottom;
-        int height = fmi.bottom - fmi.top;
+        final Paint.FontMetricsInt fmi = paint.getFontMetricsInt();
+        final int fixed = fmi.bottom;
+        final int height = fmi.bottom - fmi.top;
 
-        int length = characters.length;
-        float[] widths = new float[length];
+        final int length = characters.length;
+        final float[] widths = new float[length];
         paint.getTextWidths(characters, 0, length, widths);
 
         // Calculate bitmap size
         float maxWidth = 0.0f;
-        for (float f : widths) {
+        for (final float f : widths) {
             maxWidth = Math.max(maxWidth, f);
         }
         int hCount = (int) Math.ceil(Math.sqrt(height / maxWidth * length));
@@ -168,17 +165,17 @@ public class ImageMovableTextTexture extends ImageSpriteTexture {
             hCount--;
         }
 
-        Bitmap bitmap = Bitmap.createBitmap((int) Math.ceil(hCount * maxWidth),
+        final Bitmap bitmap = Bitmap.createBitmap((int) Math.ceil(hCount * maxWidth),
                 (int) Math.ceil(vCount * height), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
+        final Canvas canvas = new Canvas(bitmap);
         canvas.translate(0, height - fixed);
 
         // Draw
-        int[] rects = new int[length * 4];
+        final int[] rects = new int[length * 4];
         int x = 0;
         int y = 0;
         for (int i = 0; i < length; i++) {
-            int offset = i * 4;
+            final int offset = i * 4;
             rects[offset + 0] = x;
             rects[offset + 1] = y;
             rects[offset + 2] = (int) widths[i];
@@ -195,16 +192,11 @@ public class ImageMovableTextTexture extends ImageSpriteTexture {
             }
         }
 
-        Image image = Image.create(bitmap);
+        final ImageData image = Image.create(bitmap);
         bitmap.recycle();
         if (image == null) {
             return null;
         }
-        ImageWrapper imageWrapper = new ImageWrapper(image);
-        if (imageWrapper.obtain()) {
-            return new ImageMovableTextTexture(imageWrapper, length, rects, characters, widths, height, maxWidth);
-        } else {
-            return null;
-        }
+        return new ImageMovableTextTexture(image, length, rects, characters, widths, height, maxWidth);
     }
 }
