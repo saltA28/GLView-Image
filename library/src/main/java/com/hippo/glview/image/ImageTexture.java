@@ -304,7 +304,9 @@ public class ImageTexture implements Texture, Animatable {
 
                 recycled = mLock.lock(mTryRecycle);
                 if (!recycled) {
-                    imageData.complete();
+                    synchronized (imageData) {
+                        imageData.complete();
+                    }
                 }
                 recycled = mLock.unlock(mTryRecycle);
 
