@@ -389,25 +389,26 @@ public class ImageTexture implements Texture, Animatable {
         final int nextTileContentSize = tileSize == TILE_SMALLEST ? 0 : TILE_CONTENT_SIZE[tileSize - 1];
         int remainWidth, remainHeight;
         int lineWidth, lineHeight;
+        int lineOffsetX, lineOffsetY;
 
-        for (remainHeight = height - offsetY;
+        for (lineOffsetY = offsetY, remainHeight = height - lineOffsetY;
              remainHeight > 0;
-             offsetY += tileContentSize, remainHeight = height - offsetY) {
+             lineOffsetY += tileContentSize, remainHeight = height - lineOffsetY) {
             // Check whether current tile size is too large
             if (remainHeight <= nextTileContentSize) {
-                layoutTiles(list, image, opaque, width, height, offsetX, offsetY, tileSize - 1);
+                layoutTiles(list, image, opaque, width, height, offsetX, lineOffsetY, tileSize - 1);
                 // It is the last line for current tile, break now
                 break;
             }
             lineHeight = Math.min(tileContentSize, remainHeight);
 
-            for (remainWidth = width - offsetX;
+            for (lineOffsetX = offsetX, remainWidth = width - lineOffsetX;
                  remainWidth > 0;
-                 offsetX += tileContentSize, remainWidth = width - offsetX) {
+                 lineOffsetX += tileContentSize, remainWidth = width - lineOffsetX) {
                 // Check whether current tile size is too large
                 if (remainWidth <= nextTileContentSize) {
                     // Only layout for this line, so height = offsetY + lineHeight
-                    layoutTiles(list, image, opaque, width, offsetY + lineHeight, offsetX, offsetY, tileSize - 1);
+                    layoutTiles(list, image, opaque, width, lineOffsetY + lineHeight, lineOffsetX, lineOffsetY, tileSize - 1);
                     // It is the end of this line for current tile, break now
                     break;
                 }
@@ -415,7 +416,7 @@ public class ImageTexture implements Texture, Animatable {
 
                 final Tile tile = obtainTile(tileSize);
                 tile.image = image;
-                tile.setSize(tileSize, lineWidth, lineHeight, offsetX, offsetY);
+                tile.setSize(tileSize, lineWidth, lineHeight, lineOffsetX, lineOffsetY);
                 tile.setOpaque(opaque);
                 list.add(tile);
             }
