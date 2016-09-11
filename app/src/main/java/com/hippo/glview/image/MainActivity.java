@@ -6,7 +6,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.hippo.glview.image.example.R;
-import com.hippo.glview.view.GLRootView;
+import com.hippo.glview.view.GLRoot;
 import com.hippo.image.Image;
 import com.hippo.yorozuya.MathUtils;
 import com.hippo.yorozuya.SimpleHandler;
@@ -24,10 +24,11 @@ public class MainActivity extends Activity {
         Image.createBuffer(1024 * 1024);
 
         mTextView = (TextView) findViewById(R.id.text);
-        final GLRootView glRootView = (GLRootView) findViewById(R.id.gl_root);
+        final GLRoot glRootView = (GLRoot) findViewById(R.id.gl_root);
         final GLTestView glTestView = new GLTestView(this);
         mGLTestView = glTestView;
         glRootView.setContentPane(glTestView);
+        glRootView.applyRenderer();
 
         findViewById(R.id.start).setOnClickListener(new View.OnClickListener() {
             @Override

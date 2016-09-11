@@ -56,7 +56,21 @@ public class GLTestView extends GLView implements ImageTexture.Callback {
     @Override
     public void onRender(GLCanvas canvas) {
         if (mImageTexture != null) {
-            mImageTexture.draw(canvas, 0, 0);
+            final int viewWidth = getWidth();
+            final int viewHeight = getHeight();
+            if (viewHeight <= 0 || viewHeight <= 0) {
+                return;
+            }
+            final int contentWidth = mImageTexture.getWidth();
+            final int contentHeight = mImageTexture.getHeight();
+
+            final float widthScale = (float) viewWidth / contentWidth;
+            final float heightScale = (float) viewHeight / contentHeight;
+            final float fitScale = Math.min(widthScale, heightScale);
+
+            final int width = (int) (contentWidth * fitScale);
+            final int height = (int) (contentHeight * fitScale);
+            mImageTexture.draw(canvas, 0, 0, width, height);
         }
     }
 

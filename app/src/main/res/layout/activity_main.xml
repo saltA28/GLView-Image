@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <com.hippo.glview.view.GLRootView
+    <com.hippo.glview.view.GLRoot
         android:id="@+id/gl_root"
         android:layout_width="match_parent"
         android:layout_height="0dp"
