@@ -23,7 +23,7 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.github.seven332:image:0.2.4'
-    compile 'com.github.seven332:glview:0.1.2'
+    compile 'com.github.seven332:glview:0.1.4'
     testCompile 'junit:junit:4.12'
 }
 
