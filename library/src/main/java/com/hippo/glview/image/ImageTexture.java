@@ -84,6 +84,7 @@ public class ImageTexture implements Texture, Animatable {
 
     private boolean mImageBusy = false;
     private final AtomicBoolean mRunning = new AtomicBoolean();
+    private final AtomicBoolean mRequestAnimation = new AtomicBoolean();
     private final AtomicBoolean mFrameDirty = new AtomicBoolean();
     private final AtomicBoolean mNeedRelease = new AtomicBoolean();
     private final AtomicBoolean mReleased = new AtomicBoolean();
@@ -293,6 +294,10 @@ public class ImageTexture implements Texture, Animatable {
                 }
             }
 
+            if (mRequestAnimation.get()) {
+                mRunning.lazySet(true);
+            }
+
             for (;;) {
                 // Obtain
                 synchronized (mImage) {
@@ -460,6 +465,7 @@ public class ImageTexture implements Texture, Animatable {
             if (!mImageBusy) {
                 mImageBusy = true;
             } else {
+                mRequestAnimation.lazySet(true);
                 return;
             }
         }
@@ -489,6 +495,7 @@ public class ImageTexture implements Texture, Animatable {
     @Override
     public void stop() {
         mRunning.lazySet(false);
+        mRequestAnimation.lazySet(false);
     }
 
     @Override
