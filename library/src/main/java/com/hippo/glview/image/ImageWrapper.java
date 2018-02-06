@@ -17,8 +17,10 @@
 package com.hippo.glview.image;
 
 import android.graphics.Bitmap;
+import android.graphics.Rect;
 import android.support.annotation.NonNull;
 
+import android.util.Log;
 import com.hippo.image.Image;
 
 /**
@@ -27,7 +29,10 @@ import com.hippo.image.Image;
  */
 public class ImageWrapper {
 
+    private static final String LOG_TAG = "ImageWrapper";
+
     private final Image mImage;
+    private final Rect mCut;
     private int mReferences;
 
     /**
@@ -37,6 +42,34 @@ public class ImageWrapper {
      */
     public ImageWrapper(@NonNull Image image) {
         mImage = image;
+        mCut = new Rect(0, 0, image.getWidth(), image.getHeight());
+    }
+
+    /**
+     * Cuts this image to a specified region.
+     * If the region is out of the image size, clamp the region.
+     */
+    public void setCutRect(int left, int top, int right, int bottom) {
+        mCut.left = Math.max(0, left);
+        mCut.top = Math.max(0, top);
+        mCut.right = Math.min(mImage.getWidth(), right);
+        mCut.bottom = Math.min(mImage.getHeight(), bottom);
+
+        if (mCut.isEmpty()) {
+            // Empty mCut has unspecified behavior
+            Log.e(LOG_TAG, "Cut rect is empty");
+            mCut.set(0, 0, mImage.getWidth(), mImage.getHeight());
+        }
+    }
+
+    /**
+     * Cuts this image to a specified region.
+     * The region is described in percent, {@code [0.0f, 1.0f]}.
+     * If the region is out of the image size, clamp the region.
+     */
+    public void setCutPercent(float left, float top, float right, float bottom) {
+        setCutRect((int) (getWidth() * left), (int) (getHeight() * top),
+            (int) (getWidth() * right), (int) (getHeight() * bottom));
     }
 
     /**
@@ -74,14 +107,14 @@ public class ImageWrapper {
      * @see Image#getFormat()
      */
     public int getWidth() {
-        return mImage.getWidth();
+        return mCut.width();
     }
 
     /**
      * @see Image#getHeight()
      */
     public int getHeight() {
-        return mImage.getHeight();
+        return mCut.height();
     }
 
     /**
@@ -105,7 +138,7 @@ public class ImageWrapper {
      */
     public void render(int srcX, int srcY, Bitmap dst, int dstX, int dstY,
             int width, int height, boolean fillBlank, int defaultColor) {
-        mImage.render(srcX, srcY, dst, dstX, dstY,
+        mImage.render(srcX + mCut.left, srcY + mCut.top, dst, dstX, dstY,
                 width, height, fillBlank, defaultColor);
     }
 
@@ -113,7 +146,7 @@ public class ImageWrapper {
      * @see Image#texImage(boolean, int, int, int, int)
      */
     public void texImage(boolean init, int offsetX, int offsetY, int width, int height) {
-        mImage.texImage(init, offsetX, offsetY, width, height);
+        mImage.texImage(init, offsetX + mCut.left, offsetY + mCut.top, width, height);
     }
 
     /**
