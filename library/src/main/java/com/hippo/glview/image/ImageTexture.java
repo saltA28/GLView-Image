@@ -262,7 +262,7 @@ public class ImageTexture implements Texture, Animatable {
 
             synchronized (mImage) {
                 // Check released, image busy, Need release
-                if (mReleased.get() || mImageBusy || mNeedRelease.get()) {
+                if (mReleased.get() || mImage.isImageRecycled() || mImageBusy || mNeedRelease.get()) {
                     mAnimateRunnable = null;
                     return;
                 }
@@ -302,7 +302,7 @@ public class ImageTexture implements Texture, Animatable {
                 // Obtain
                 synchronized (mImage) {
                     // Check released, image busy, Need release, not running
-                    if (mReleased.get() || mImageBusy || mNeedRelease.get() || !mRunning.get()) {
+                    if (mReleased.get() || mImage.isImageRecycled() || mImageBusy || mNeedRelease.get() || !mRunning.get()) {
                         mAnimateRunnable = null;
                         return;
                     }
@@ -344,7 +344,7 @@ public class ImageTexture implements Texture, Animatable {
                 // Obtain
                 synchronized (mImage) {
                     // Check released
-                    if (mReleased.get()) {
+                    if (mReleased.get() || mImage.isImageRecycled()) {
                         break;
                     }
                     // Check image busy
@@ -472,7 +472,7 @@ public class ImageTexture implements Texture, Animatable {
             }
         }
 
-        boolean end = mReleased.get() || mNeedRelease.get() ||
+        boolean end = mReleased.get() || mImage.isImageRecycled() || mNeedRelease.get() ||
                 (mImage.isCompleted() && mImage.getFrameCount() <= 1) || mRunning.get();
 
         synchronized (mImage) {

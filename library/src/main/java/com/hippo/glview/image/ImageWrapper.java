@@ -96,6 +96,10 @@ public class ImageWrapper {
         }
     }
 
+    public boolean isImageRecycled() {
+        return mImage.isRecycled();
+    }
+
     /**
      * @see Image#getFormat()
      */
