@@ -356,8 +356,10 @@ public class ImageTexture implements Texture, Animatable {
                     mImageBusy = true;
                 }
 
-                mImage.release();
-                mReleased.lazySet(true);
+                if (!mReleased.get()) {
+                    mImage.release();
+                    mReleased.lazySet(true);
+                }
 
                 synchronized (mImage) {
                     // Release image
@@ -687,8 +689,10 @@ public class ImageTexture implements Texture, Animatable {
         }
 
         if (releaseNow) {
-            mImage.release();
-            mReleased.lazySet(true);
+            if (!mReleased.get()) {
+                mImage.release();
+                mReleased.lazySet(true);
+            }
             synchronized (mImage) {
                 mImageBusy = false;
             }
