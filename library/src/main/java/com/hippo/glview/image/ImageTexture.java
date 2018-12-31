@@ -16,6 +16,7 @@
 
 package com.hippo.glview.image;
 
+import android.graphics.ColorMatrix;
 import android.graphics.RectF;
 import android.graphics.drawable.Animatable;
 import android.os.Process;
@@ -571,12 +572,16 @@ public class ImageTexture implements Texture, Animatable {
 
     @Override
     public void draw(GLCanvas canvas, int x, int y) {
-        draw(canvas, x, y, mWidth, mHeight);
+        draw(canvas, x, y, mWidth, mHeight, null);
     }
 
     // Draws the texture on to the specified rectangle.
     @Override
     public void draw(GLCanvas canvas, int x, int y, int w, int h) {
+        draw(canvas, x, y, mWidth, mHeight, null);
+    }
+
+    public void draw(GLCanvas canvas, int x, int y, int w, int h, ColorMatrix matrix) {
         RectF src = mSrcRect;
         RectF dest = mDestRect;
         float scaleX = (float) w / mWidth;
@@ -588,13 +593,17 @@ public class ImageTexture implements Texture, Animatable {
             src.offset(t.offsetX, t.offsetY);
             mapRect(dest, src, 0, 0, x, y, scaleX, scaleY);
             src.offset(t.borderSize - t.offsetX, t.borderSize - t.offsetY);
-            canvas.drawTexture(t, src, dest);
+            canvas.drawTexture(t, src, dest, matrix);
         }
     }
 
     // Draws a sub region of this texture on to the specified rectangle.
     @Override
     public void draw(GLCanvas canvas, RectF source, RectF target) {
+        draw(canvas, source, target, null);
+    }
+
+    public void draw(GLCanvas canvas, RectF source, RectF target, ColorMatrix matrix) {
         RectF src = mSrcRect;
         RectF dest = mDestRect;
         float x0 = source.left;
@@ -613,7 +622,7 @@ public class ImageTexture implements Texture, Animatable {
             }
             mapRect(dest, src, x0, y0, x, y, scaleX, scaleY);
             src.offset(t.borderSize - t.offsetX, t.borderSize - t.offsetY);
-            canvas.drawTexture(t, src, dest);
+            canvas.drawTexture(t, src, dest, matrix);
         }
     }
 
