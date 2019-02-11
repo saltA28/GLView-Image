@@ -24,7 +24,7 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.github.seven332:image:0.1.8-jpeg-png-gif'
-    compile 'com.github.seven332:glview:cc3f18d1b2'
+    compile 'com.github.seven332:glview:ba6aee61d7'
     testCompile 'junit:junit:4.12'
 }
 

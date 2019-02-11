@@ -16,14 +16,12 @@
 
 package com.hippo.glview.image;
 
-import android.graphics.ColorMatrix;
 import android.graphics.RectF;
 import android.graphics.drawable.Animatable;
 import android.os.Process;
 import android.os.SystemClock;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
-
 import com.hippo.glview.annotation.RenderThread;
 import com.hippo.glview.glrenderer.GLCanvas;
 import com.hippo.glview.glrenderer.NativeTexture;
@@ -32,7 +30,6 @@ import com.hippo.glview.view.GLRoot;
 import com.hippo.yorozuya.thread.InfiniteThreadExecutor;
 import com.hippo.yorozuya.thread.PVLock;
 import com.hippo.yorozuya.thread.PriorityThreadFactory;
-
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.ref.WeakReference;
@@ -572,16 +569,12 @@ public class ImageTexture implements Texture, Animatable {
 
     @Override
     public void draw(GLCanvas canvas, int x, int y) {
-        draw(canvas, x, y, mWidth, mHeight, null);
+        draw(canvas, x, y, mWidth, mHeight);
     }
 
     // Draws the texture on to the specified rectangle.
     @Override
     public void draw(GLCanvas canvas, int x, int y, int w, int h) {
-        draw(canvas, x, y, mWidth, mHeight, null);
-    }
-
-    public void draw(GLCanvas canvas, int x, int y, int w, int h, ColorMatrix matrix) {
         RectF src = mSrcRect;
         RectF dest = mDestRect;
         float scaleX = (float) w / mWidth;
@@ -593,17 +586,13 @@ public class ImageTexture implements Texture, Animatable {
             src.offset(t.offsetX, t.offsetY);
             mapRect(dest, src, 0, 0, x, y, scaleX, scaleY);
             src.offset(t.borderSize - t.offsetX, t.borderSize - t.offsetY);
-            canvas.drawTexture(t, src, dest, matrix);
+            canvas.drawTexture(t, src, dest);
         }
     }
 
     // Draws a sub region of this texture on to the specified rectangle.
     @Override
     public void draw(GLCanvas canvas, RectF source, RectF target) {
-        draw(canvas, source, target, null);
-    }
-
-    public void draw(GLCanvas canvas, RectF source, RectF target, ColorMatrix matrix) {
         RectF src = mSrcRect;
         RectF dest = mDestRect;
         float x0 = source.left;
@@ -622,7 +611,7 @@ public class ImageTexture implements Texture, Animatable {
             }
             mapRect(dest, src, x0, y0, x, y, scaleX, scaleY);
             src.offset(t.borderSize - t.offsetX, t.borderSize - t.offsetY);
-            canvas.drawTexture(t, src, dest, matrix);
+            canvas.drawTexture(t, src, dest);
         }
     }
 
